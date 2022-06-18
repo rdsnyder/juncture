@@ -71,7 +71,8 @@
       methods: {
         loadPage() {
           let prefix = [this.acct, this.repo].filter(elem => elem).join('/')
-          let base = `/${document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0).join('/')}/`
+          let basePathElems = document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0)
+          let base = basePathElems.length > 0 ? `/${basePathElems.join('/')}/` : '/'
           let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${base}&prefix=${prefix}&inline=true`
           if (this.ref) url += `&ref=${this.ref}`
           console.log(`loadPage: url=${url}`)
