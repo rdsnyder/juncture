@@ -78,8 +78,8 @@
           if (this.ref) qargs.push(`ref=${this.ref}`)
           if (this.isGhp ) qargs.push('ghp=true')
           let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${base}&prefix=${prefix}&inline=true`
-          if (qargs.length > 0) url += `&${qargs.join('&')}`
-          console.log(`loadPage: url=${url}`)
+          if (qargs.length > 0) url += `?${qargs.join('&')}`
+          console.log(`loadPage: qargs=${qargs} url=${url}`)
           fetch(url).then(resp => resp.text())
           .then(html => {
             let [head, body] = new DOMParser().parseFromString(html, 'text/html').children[0].children
