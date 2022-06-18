@@ -74,7 +74,7 @@
           let prefix = [this.acct, this.repo].filter(elem => elem).join('/')
           let basePathElems = document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0)
           let base = basePathElems.length > 0 ? `/${basePathElems.join('/')}/` : '/'
-          qargs = [`base=${base}`, `prefix=${prefix}`, 'inline=true']
+          let qargs = [`base=${base}`, `prefix=${prefix}`, 'inline=true']
           if (this.ref) qargs.push(`ref=${this.ref}`)
           if (this.isGhp ) qargs.push('ghp=true')
           let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?${qargs.join('&')}`
