@@ -1,6 +1,6 @@
 # Juncture demo
 
-- [(amalfi](amalfi)
+- [amalfi](amalfi)
 - [amalfi-v2](amalfi-v2)
 - [nested](nested)
 - [nested/nested1](nested/nested1)
