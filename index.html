@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <base href="/">
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juncture</title>
+  <style>
+    .visible {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity .5s linear;
+    }
+    .hidden {
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0s .5s, opacity .5s linear;
+    }
+  </style>
+</head>
+<body class="hidden">
+  <div id="app" ref="app" v-html="html"></div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+  <!-- This is used for deep linking of Single Page Apps when hosted with GitHub Pages -->
+  <script type="text/javascript">
+    (function(l) {
+      if (l.search[1] === '/' ) {
+        let decoded = l.search.slice(1).split('&').map(s => s.replace(/~and~/g, '&')).join('?')
+        window.history.replaceState(null, null, l.pathname.slice(0, -1) + decoded + l.hash)
+      }
+    }(window.location))
+  </script>
+  <script type="module">
+    const API_ENDPOINT = location.hostname === 'localhost' ? 'http://localhost:8000/html' : 'https://api.visual-essays.net/html'
+    
+    new Vue({
+      el: '#app',
+      data: () => ({
+        acct: 'rdsnyder',
+        repo: 'kent',
+        ref: 'test',
+        isGhp: false,
+        html: null
+      }),
+      created() {
+        this.isGhp = location.host.indexOf('github.io') > 0
+        let pathElems = location.pathname.split('/').filter(elem => elem)
+        this.acct = this.acct || (this.isGhp ? location.host.split('.')[0] : pathElems.length > 0 ? pathElems[0] : '')
+        this.repo = this.repo || (this.isGhp ? pathElems.length > 0 ? pathElems[0] : '' : pathElems.length > 1 ? pathElems[1] : '')
+        this.path = pathElems.slice(this.isGhp ? 1 : 0).join('/')
+        let base = pathElems.length > 0 ? `/${pathElems.join('/')}/` : '/'
+        document.head.querySelector('base').href = base
+        console.log(`acct=${this.acct} repo=${this.repo} path=${this.path} base=${base} ref=${this.ref} isGhp=${this.isGhp}`)
+        
+        /*
+        let qargRef = new URL(location.href).searchParams.get('ref')
+        let browserPath = `${location.origin}/${this.path}`
+        if (qargRef && qargRef !== this.ref) browserPath += `?ref=${qargRef}`
+        if (qargRef && qargRef !== this.ref) {
+          this.ref = qargRef
+          browserPath += `?ref=${qargRef}`
+        }
+        window.history.replaceState({}, document.title, browserPath)
+        */
+
+      },
+      mounted() {
+        this.loadPage()
+      },
+      methods: {
+        loadPage() {
+          let prefix = [this.acct, this.repo].filter(elem => elem).join('/')
+          let base = `/${document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0).join('/')}/`
+          let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${base}&prefix=${prefix}&inline=true`
+          if (this.ref) url += `&ref=${this.ref}`
+          console.log(`loadPage: url=${url}`)
+          fetch(url).then(resp => resp.text())
+          .then(html => {
+            let [head, body] = new DOMParser().parseFromString(html, 'text/html').children[0].children
+            this.html = body.children[0].innerHTML
+            this.loadDependencies(head.querySelectorAll('link[rel="stylesheet"]'), 0, () => this.loadDependencies(head.querySelectorAll('style'), 0))
+            this.loadDependencies(body.querySelectorAll('script'), 0, () => console.log('set visible'))
+          })
+        },
+        
+        loadDependencies(dependencies, i, callback) {
+          if (dependencies.length > 0) {
+            // console.log(`loadDependencies ${i+1} of ${dependencies.length} ${dependencies[0].localName}`)
+            this.load(dependencies.item(i), () => {
+              if (i < dependencies.length-1) this.loadDependencies(dependencies, i+1, callback) 
+              else if (callback) callback()
+            })
+          }
+        },
+  
+        load(srcEl, callback) {
+          let e
+          if (srcEl.localName  === 'link') {
+            e = document.createElement('link')
+            e.href = srcEl.href
+            e.rel = srcEl.rel
+            e.type = 'text/css'
+            e.addEventListener('load', callback)
+            document.getElementsByTagName('head')[0].appendChild(e)
+          } else if (srcEl.localName  === 'style') {
+            e = document.createElement('style')
+            e.textContent = srcEl.textContent
+            e.addEventListener('load', callback)
+            document.getElementsByTagName('head')[0].appendChild(e)
+          } else if (srcEl.localName  === 'script') {
+            e = document.createElement('script')
+            if (srcEl.src) {
+              e.src = srcEl.src
+              if (srcEl.type) e.type = srcEl.type
+              e.addEventListener('load', callback)
+            } else {
+              if (srcEl.type) e.type = srcEl.type
+              e.text = srcEl.text
+            }
+            document.getElementsByTagName('body')[0].appendChild(e)
+            if (!e.src) callback()
+          }
+        }
+      }
+    })
+    Vue.config.productionTip = false
+    Vue.config.devtools = true
+
+  </script>
+</body>
+</html>
