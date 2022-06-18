@@ -74,12 +74,11 @@
           let prefix = [this.acct, this.repo].filter(elem => elem).join('/')
           let basePathElems = document.head.querySelector('base').href.slice(location.origin.length).split('/').filter(elem => elem).slice(this.isGhp ? 1 : 0)
           let base = basePathElems.length > 0 ? `/${basePathElems.join('/')}/` : '/'
-          qargs = []
+          qargs = [`base=${base}`, `prefix=${prefix}`, 'inline=true']
           if (this.ref) qargs.push(`ref=${this.ref}`)
           if (this.isGhp ) qargs.push('ghp=true')
-          let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?base=${base}&prefix=${prefix}&inline=true`
-          if (qargs.length > 0) url += `?${qargs.join('&')}`
-          console.log(`loadPage: qargs=${qargs} url=${url}`)
+          let url = `${API_ENDPOINT}/${prefix}/${this.path}${this.path === '' ? '' : '/'}?${qargs.join('&')}`
+          console.log(`loadPage: url=${url}`)
           fetch(url).then(resp => resp.text())
           .then(html => {
             let [head, body] = new DOMParser().parseFromString(html, 'text/html').children[0].children
