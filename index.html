@@ -80,7 +80,7 @@
           .then(html => {
             let [head, body] = new DOMParser().parseFromString(html, 'text/html').children[0].children
             console.log(body)
-            this.html = body.children[0].innerHTML
+            this.html = body.innerHTML
             this.loadDependencies(head.querySelectorAll('link[rel="stylesheet"]'), 0, () => this.loadDependencies(head.querySelectorAll('style'), 0))
             this.loadDependencies(body.querySelectorAll('script'), 0, () => console.log('set visible'))
           })
