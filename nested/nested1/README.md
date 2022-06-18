@@ -4,6 +4,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 - [top](/)
 - [up](..)
-- [Nested relative](../nested)
-- [Nested absolute](/nested)
-- [Nested Nested 2](./nested2)
+- [../](../nested)
+- [/nested](/nested)
+- [./nested2](./nested2)
+- [/nested/nested2](/nested/nested2)
