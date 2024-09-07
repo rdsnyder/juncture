@@ -1,12 +1,10 @@
-// 1
-
 import { addLink, addScript, articleFromHtml, getGhFile, getMarkdown, markdownToHtml, mode, mount, setConfig, structureContent } from './ghp-lib.js'
 
 const base = mode === 'prod'
   ? import.meta.url.replace(/\/js\/ghp\.js$/, '')
   : import.meta.url.replace(/\/ghp\.js$/, '/wc/dist')
 
-console.log(`mode=${mode} base=${base}`)
+// console.log(`mode=${mode} base=${base}`)
     
 if (!window.config) setConfig()
 
