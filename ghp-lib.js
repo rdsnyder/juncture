@@ -987,9 +987,6 @@ function isJunctureV1(contentEl) {
 }
 
 function getContent() {
-  console.log('getContent')
-  console.log('config.content', window.config.content)
-  console.log('document.body.children[0].innerHTML', document.body.children[0].innerHTML)
   return window.config.content || document.body.children[0].innerHTML
 }
 

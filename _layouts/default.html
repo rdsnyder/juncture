@@ -6,7 +6,7 @@
 <link rel="apple-touch-icon" href="https://v3.juncture-digital.org/images/mobile-icon.png">
 
 <script>
-  window.jekyll={ site: {{site|jsonify}}, page: {{page|jsonify}}, content: {{content|jsonify}} }
+  window.jekyll = {site:{baseurl:'{{site.baseurl}}',github:{owner_name:'{{site.github.owner_name}}',repository_name:'{{site.github.repository_name}}',source:{branch:'{{site.github.source.branch}}'}}},page:{path:'{{page.path}}',dir:'{{page.dir}}',name:'{{page.name}}'}}
   window.options = `
   title: Juncture
   description: Website framework using Markdown, Github Pages, and custom web components.
